@@ -1,0 +1,26 @@
+---
+services:
+  openbao:
+    image: ghcr.io/openbao/openbao:latest
+    container_name: openbao
+    command: server
+    restart: unless-stopped
+
+    ports:
+      - "8200:8200"
+
+#    environment:
+#      ##VAULT_DEV_ROOT_TOKEN_ID: root
+#      VAULT_LISTEN_ADDRESS: 0.0.0.0:8200
+
+    cap_add:
+      - IPC_LOCK
+
+    volumes:
+      - openbao-data:/openbao/file
+      - ./config:/openbao/config
+
+
+volumes:
+  openbao-data:
+
