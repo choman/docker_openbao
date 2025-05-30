@@ -1,13 +1,15 @@
 
 backend "file" {
-  path = "/openbao/file"
+  path = "/openbao/data"
 }
 
 listener "tcp" {
   address = "0.0.0.0:8200"
   tls_disable = 1
-  #tls_cert_file = "/openbao/localhost.pem"
-  #tls_key_file = "/openbao/localhost.key"
+#  tls_cert_file = "/openbao/localhost.pem"
+#  tls_key_file = "/openbao/localhost.key"
+#  tls_cert_file = "/opt/openbao/tls/tls.crt"
+#  tls_key_file  = "/opt/openbao/tls/tls.key"
 }
 
 disable_mlock = true

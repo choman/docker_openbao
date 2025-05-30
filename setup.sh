@@ -6,11 +6,15 @@ WORKDIR="workdir"
 
 source 'functions.sh'
 
+passwd=$1
+
 export VAULT_ADDR=http://${VAULT_SERVER}:8200
 
 mkdir -p ${WORKDIR}
 
 bao operator init > ${WORKDIR}/out
+
+echo "hello"
 
 
 grep "Unseal Key" ${WORKDIR}/out > ${WORKDIR}/keys
@@ -19,7 +23,7 @@ grep "Root Token" ${WORKDIR}/out | awk -F': ' '{print $2}' > ${WORKDIR}/.root_to
 token="$(cat "${WORKDIR}/.root_token")"
 unseal_vault "bao"
 
-if false; then
+if true; then
     # get vault config
     declare -a keys
     readarray -t keys < ${WORKDIR}/keys
@@ -32,6 +36,8 @@ if false; then
     bao operator unseal ${keys[1]/Unseal Key [1-5]: /}
     bao operator unseal ${keys[2]/Unseal Key [1-5]: /}
 fi
+echo $token
+export VAULT_TOKEN=$token
 
 if false; then
    bao secrets enable transit
@@ -47,9 +53,10 @@ fi
 
 bao secrets enable -path=secret -version=2 kv
 bao secrets list -detailed
-bao kv put secret/boot unlock_key="abcd1234!"
-bao kv put secret/boot unlock_key="ABCD1234!"
-retrieve_secret "bao"
+if [[ -n "${passwd}" ]]; then
+    bao kv put secret/boot unlock_key="${passwd}"
+    retrieve_secret "bao"
+fi
 ## bao kv get -field unlock_key secret/boot
 
 

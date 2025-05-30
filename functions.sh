@@ -11,6 +11,7 @@ unseal_curl()
 unseal_bao()
 {
     local key=$1
+    echo "key = $key"
     bao operator unseal $key
 }
 
@@ -53,8 +54,8 @@ unseal_vault()
 {
    how="${1:-curl}"
 
-   declare -a keys
-   readarray -t keys < ${WORKDIR}/keys
+   declare -a unseal_keys
+   readarray -t unseal_keys < ${WORKDIR}/keys
 
    for key in "${unseal_keys[@]}"; do
        key=$(echo $key | awk -F: '{print $NF}')
