@@ -17,10 +17,14 @@ services:
       - IPC_LOCK
 
     volumes:
-      - openbao-data:/openbao/file
+      - openbao-data:/openbao/data
       - ./config:/openbao/config
 
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--quiet", "http://localhost:8200/v1/sys/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   openbao-data:
-
