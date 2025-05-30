@@ -2,7 +2,6 @@
 
 EXTERNAL_IP_URL="https://ifconfig.me"
 PROXY_INFO="proxyinfo.env"
-PROXY_ENV="proxy.env"
 
 test_curl() {
    if ! command -v curl > /dev/null 2>&1; then
@@ -16,9 +15,10 @@ initialize_proxy_info() {
       echo "EXTERNAL_IP=$(curl -sS "${EXTERNAL_IP_URL}")" >  "${PROXY_INFO}"
       echo "EXTERNAL_PROXY=" >> "${PROXY_INFO}"
    fi
+   echo "Please ensure EXTERNAL_PROXY is set correctly in: ${PROXY_INFO}"
 }
 
-update_proxy_env() {
+update_compose_override() {
    local ip=""
    local proxy=""
 
@@ -31,7 +31,10 @@ update_proxy_env() {
    # sanatize proxy
    [[ "${proxy}" != */ ]] && proxy="${proxy}/"
 
-   echo "PROXY='${proxy:-}'" > "${PROXY_ENV}"
+   if [[ -n "${proxy}" ]]; then
+       echo "Updating override file: compose.override.yml"
+       sed -e "s|PROXY|${proxy}|" compose.override.yml.tmpl > compose.override.yml
+   fi
 }
 
 test_curl
@@ -39,5 +42,5 @@ initialize_proxy_info
 
 # shellcheck disable=SC1090
 source "${PROXY_INFO}"
-update_proxy_env
+update_compose_override
 
