@@ -1,10 +1,7 @@
 ---
 services:
   openbao:
-    image: ${PROXY}ghcr.io/openbao/openbao:latest
-    env_file:
-      - ./proxy.env
-
+    image: ghcr.io/openbao/openbao:latest
     container_name: openbao
     command: server
     restart: unless-stopped
